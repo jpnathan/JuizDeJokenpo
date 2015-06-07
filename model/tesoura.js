@@ -1,7 +1,11 @@
 var tesoura = {};
 
-tesoura.empataCom = "tesoura";
-tesoura.ganhaDe = "papel";
-tesoura.perdePara = "pedra";
+tesoura.empataCom = function(jogada) {
+	return jogada === "tesoura";
+};
+
+tesoura.ganhaDe = function(jogada) {
+	return jogada === "papel";
+};
 
 module.exports = tesoura;

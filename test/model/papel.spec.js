@@ -3,14 +3,26 @@ var papel = require("../../model/papel");
 
 describe("Papel", function() {
 	it("empata com papel", function() {
-		assert.equal(papel.empataCom, "papel");
+		assert.equal(papel.empataCom("papel"), true);
+	});
+
+	it("não empata com tesoura", function() {
+		assert.equal(papel.empataCom("tesoura"), false);
+	});
+
+	it("não empata com pedra", function() {
+		assert.equal(papel.empataCom("pedra"), false);
 	});
 
 	it("ganha de pedra", function() {
-		assert.equal(papel.ganhaDe, "pedra");
+		assert.equal(papel.ganhaDe("pedra"), true);
 	});
 
-	it("perde para tesoura", function() {
-		assert.equal(papel.perdePara, "tesoura");
+	it("não ganha de tesoura", function() {
+		assert.equal(papel.ganhaDe("tesoura"), false);
+	});
+
+	it("não ganha de papel", function() {
+		assert.equal(papel.ganhaDe("papel"), false);
 	});
 });

@@ -1,7 +1,11 @@
 var papel = {};
 
-papel.empataCom = "papel";
-papel.ganhaDe = "pedra";
-papel.perdePara = "tesoura";
+papel.empataCom = function(jogada) {
+	return jogada === "papel";
+};
+
+papel.ganhaDe = function(jogada) {
+	return jogada === "pedra";
+};
 
 module.exports = papel;
