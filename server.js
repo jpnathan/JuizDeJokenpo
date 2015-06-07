@@ -1,6 +1,7 @@
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
+var juiz = require("./model/juiz");
 
 app.use(bodyParser.urlencoded({
 	extended: true
@@ -12,8 +13,9 @@ var porta = process.env.PORT || 1100;
 var router = express.Router();
 
 router.post("/analisarJogada", function(req, res) {
-	console.log(req.body.a);
-	res.json("Resposta inválida");
+	var jogada = req.body;
+
+	res.json(juiz.analisar(jogada.jogada1, jogada.jogada2));
 });
 
 app.use("/api", router);
