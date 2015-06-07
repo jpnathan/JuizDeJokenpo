@@ -1,3 +1,5 @@
+var jogadaFactory = require("../model/jogadaFactory");
+
 var juiz = {};
 var resultadoDaJogada = { 
 	pedra: "pedra",
