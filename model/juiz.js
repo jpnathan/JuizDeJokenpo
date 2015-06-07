@@ -1,25 +1,31 @@
 var juiz = {};
+var resultadoDaJogada = { 
+	pedra: "pedra",
+	papel: "papel",
+	tesoura: "tesoura",
+	empate: "empate"
+};
 
 juiz.analisar = function(jogada1, jogada2) {
 	if (jogada1 === "pedra" && jogada2 === "papel")
-		return "papel";
+		return resultadoDaJogada.papel;
 
 	else if (jogada1 === "pedra" && jogada2 === "tesoura")
-		return "pedra";
+		return resultadoDaJogada.pedra;
 
 	else if (jogada1 === "papel" && jogada2 === "pedra")
-		return "papel";
+		return resultadoDaJogada.papel;
 
 	else if (jogada1 === "papel" && jogada2 === "tesoura")
-		return "tesoura";
+		return resultadoDaJogada.tesoura;
 
 	else if (jogada1 === "tesoura" && jogada2 === "pedra")
-		return "pedra";
+		return resultadoDaJogada.pedra;
 
 	else if (jogada1 === "tesoura" && jogada2 === "papel")
-		return "tesoura";
+		return resultadoDaJogada.tesoura;
 
-	return "empate";
+	return resultadoDaJogada.empate;
 };
 
 module.exports = juiz;
