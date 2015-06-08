@@ -9,7 +9,9 @@ API em Node para um juiz de Jokenpo
 1. Instalar [NodeJS](https://nodejs.org/)
 2. Entrar na raiz do projeto e executar os seguintes comandos:
 	
+```js
 	npm install
 	node server.js
+```
 
 3. Pronto! Basta consumir a API na url http://localhost:1100/api/analisarJogada
