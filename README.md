@@ -9,7 +9,7 @@ API em Node para um juiz de Jokenpo
 1. Instalar [NodeJS](https://nodejs.org/)
 2. Entrar na raiz do projeto e executar os seguintes comandos:
 	
-```js
+```
 	npm install
 	node server.js
 ```
