@@ -1,6 +1,6 @@
 # JuizDeJokenpo
 
-![alt tag](https://raw.github.com/renansiravegna/juizdejokenpo/master/images/jokenpo.gif)
+![alt tag](https://raw.github.com/renansiravegna/juizdejokenpo/master/images/jokenpo.png)
 
 API em Node para um juiz de Jokenpo
 
