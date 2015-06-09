@@ -1,5 +1,5 @@
 var assert = require("assert");
-var papel = require("../../model/papel");
+var papel = require("../../../model/jogadas/papel");
 
 describe("Papel", function() {
 	it("empata com papel", function() {

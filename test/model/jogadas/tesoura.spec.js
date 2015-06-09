@@ -1,5 +1,5 @@
 var assert = require("assert");
-var tesoura = require("../../model/tesoura");
+var tesoura = require("../../../model/jogadas/tesoura");
 
 describe("Tesoura", function() {
 	it("empata com tesoura", function() {

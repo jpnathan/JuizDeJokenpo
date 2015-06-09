@@ -1,8 +1,8 @@
 var assert = require("assert");
-var jogadaFactory = require("../../model/jogadaFactory");
-var papel = require("../../model/papel");
-var tesoura = require("../../model/tesoura");
-var pedra = require("../../model/pedra");
+var jogadaFactory = require("../../../model/jogadas/jogadaFactory");
+var papel = require("../../../model/jogadas/papel");
+var tesoura = require("../../../model/jogadas/tesoura");
+var pedra = require("../../../model/jogadas/pedra");
 
 describe("Jogada factory", function() {
 	it("deve criar um papel", function() {

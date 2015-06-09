@@ -1,4 +1,4 @@
-var jogadaFactory = require("../model/jogadaFactory");
+var jogadaFactory = require("../model/jogadas/jogadaFactory");
 
 var juiz = {};
 

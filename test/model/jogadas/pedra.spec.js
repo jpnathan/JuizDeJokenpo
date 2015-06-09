@@ -1,5 +1,5 @@
 var assert = require("assert");
-var pedra = require("../../model/pedra");
+var pedra = require("../../../model/jogadas/pedra");
 
 describe("Pedra", function() {
 	it("empata com pedra", function() {
