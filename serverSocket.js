@@ -15,22 +15,29 @@ app.use(function(req, res, next) {
 	next();
 });
 
-var porta = process.env.PORT || 80;
+var porta = process.env.PORT || 1110;
 
 var router = express.Router();
+var jogadaEmEspera;
+var resEmEspera;
 
 router.post("/analisarJogada", function(req, res) {
-	var jogada = req.body;
-	var resposta = {
-		jogadaVencedora: juiz.analisar(jogada.jogada1, jogada.jogada2)
-	};
-	console.log("Jogada recebida");
+	if (!jogadaEmEspera){
+		console.log("Jogada esperando");
+		resEmEspera = res;
+		jogadaEmEspera = req.body.jogada;
+	}
+	else {
+		var resposta = {
+			jogadaVencedora: juiz.analisar(jogadaEmEspera, req.body.jogada)
+		};
 
-	res.json(resposta);
-});
-
-router.get("/teste", function(req, res) {
-	res.json("Oi");
+		res.json(resposta);
+		resEmEspera.json(resposta);
+		
+		jogadaEmEspera = undefined;
+		resEmEspera = undefined;
+	}
 });
 
 app.use("/api", router);
