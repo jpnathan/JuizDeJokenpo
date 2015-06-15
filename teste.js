@@ -19,6 +19,8 @@ io.on("connection", function(socket) {
 			id: socket.id,
 			nome: mensagem
 		});
+
+		socket.emit("entrada-registrada");
 	});
 
 	socket.on("jogada", function(jogada) {
