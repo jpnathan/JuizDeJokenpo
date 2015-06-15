@@ -45,9 +45,6 @@ io.on("connection", function(socket) {
 			var jogadaDoAdversario = jogadasEmEspera[tokenDoAdversario];
 			delete jogadasEmEspera[tokenDoAdversario];
 
-			console.log("Jogador 1: ", meuToken);
-			console.log("Jogador 2: ", tokenDoAdversario);
-
 			var jogadaVencedora = juiz.analisar(minhaJogada, jogadaDoAdversario);
 			var resposta = "Jogador " + (jogadaVencedora === minhaJogada ? meuNome : nomeDoAdversario) + " venceu jogando " + jogadaVencedora;
 
@@ -55,8 +52,12 @@ io.on("connection", function(socket) {
 				jogadaVencedora: resposta
 			};
 
-			socket.to(meuToken).emit("jogadaVencedora", resposta);
-			socket.to(tokenDoAdversario).emit("jogadaVencedora", resposta);
+			console.log(meuToken);
+			console.log(tokenDoAdversario);
+			console.log(resposta);
+
+			io.to(meuToken).emit("jogadaVencedora", resposta);
+			io.to(tokenDoAdversario).emit("jogadaVencedora", resposta);
 		}
 	});
 
