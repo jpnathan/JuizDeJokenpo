@@ -19,7 +19,6 @@ io.on("connection", function(socket) {
 			id: socket.id,
 			nome: mensagem
 		});
-		socket.broadcast.emit("jogadores", jogadores);
 	});
 
 	socket.on("jogada", function(jogada) {
@@ -71,6 +70,11 @@ io.on("connection", function(socket) {
 
 		console.log("user disconnected");
 	});
+});
+
+app.get("/api/jogadoresOnline", function(req, res) {
+	console.log('teste');
+	res.json(jogadores);
 });
 
 http.listen(3000, function() {
