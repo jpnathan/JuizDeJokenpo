@@ -1,29 +1,34 @@
-var app = require("express")();
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
-var juiz = require("./model/juiz");
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var Lobby = require('./model/lobby');
+var juiz = require('./model/juiz');
 
 app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 	next();
 });
 
 var jogadasEmEspera = {};
 var jogadores = [];
+var lobby = new Lobby();
 
-io.on("connection", function(socket) {
-	socket.on("entrar", function(mensagem) {
-		jogadores.push({
+io.on('connection', function(socket) {
+	socket.on('entrar', function(mensagem) {
+		var jogador = {
 			id: socket.id,
 			nome: mensagem
-		});
+		};
 
-		socket.emit("entrada-registrada");
+		jogadores.push(jogador);
+		lobby.adicionarJogador(jogador);
+
+		socket.emit('entrada-registrada');
 	});
 
-	socket.on("jogada", function(jogada) {
+	socket.on('jogada', function(jogada) {
 		var meuToken = socket.id;
 		var minhaJogada = jogada.jogada;
 		var tokenDoAdversario = jogada.tokenDoAdversario;
@@ -46,7 +51,7 @@ io.on("connection", function(socket) {
 			delete jogadasEmEspera[tokenDoAdversario];
 
 			var jogadaVencedora = juiz.analisar(minhaJogada, jogadaDoAdversario);
-			var resposta = "Jogador " + (jogadaVencedora === minhaJogada ? meuNome : nomeDoAdversario) + " venceu jogando " + jogadaVencedora;
+			var resposta = 'Jogador ' + (jogadaVencedora === minhaJogada ? meuNome : nomeDoAdversario) + ' venceu jogando ' + jogadaVencedora;
 
 			var resposta = {
 				jogadaVencedora: resposta
@@ -56,30 +61,30 @@ io.on("connection", function(socket) {
 			console.log(tokenDoAdversario);
 			console.log(resposta);
 
-			io.to(meuToken).emit("jogadaVencedora", resposta);
-			io.to(tokenDoAdversario).emit("jogadaVencedora", resposta);
+			io.to(meuToken).emit('jogadaVencedora', resposta);
+			io.to(tokenDoAdversario).emit('jogadaVencedora', resposta);
 		}
 	});
 
-	console.log("a user connected");
+	console.log('a user connected');
 
-	socket.on("disconnect", function() {
+	socket.on('disconnect', function() {
 		for (var index = 0; index < jogadores.length; index++) {
 			if (jogadores[index].id === socket.id) {
-				console.log("Id encontrado: ", socket.id);
+				console.log('Id encontrado: ', socket.id);
 				jogadores.slice(index);
 			}
 		}
 
-		console.log("user disconnected");
+		console.log('user disconnected');
 	});
 });
 
-app.get("/api/jogadoresOnline", function(req, res) {
-	console.log('teste');
-	res.json(jogadores);
+app.get('/api/jogadoresOnline', function(req, res) {
+	console.log('Jogadores obtidos');
+	res.json(lobby.obterJogadores());
 });
 
 http.listen(3000, function() {
-	console.log("listening on *:3000");
+	console.log('listening on *:3000');
 });
