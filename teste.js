@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Lobby = require('./model/lobby');
+var Partida = require('./model/partida');
 var jogadorFactory = require('./model/jogadorFactory');
 var juiz = require('./model/juiz');
 
@@ -37,9 +38,10 @@ io.on('connection', function(socket) {
 
 	// TODO: Validar se o jogador escolhido já não está em um desafio
 	socket.on('aceitar-desafio', function(tokenDoAdversario) {
-		var meuToken = socket.id;
+		var eu = lobby.obter(socket.id);
+		var meuAdversario = lobby.obter(tokenDoAdversario);
 
-		var partida = partidaFactory.criar(meuToken, tokenDoAdversario);
+		var partida = new Partida(eu, meuAdversario);
 		partidas.adicionar(partida);
 
 		io.to(meuToken).emit('iniciar-partida', partida);

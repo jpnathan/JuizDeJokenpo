@@ -32,12 +32,12 @@ describe('Lobby de jogadores', function() {
 		}).should.throw(Error, 'Este nome já está sendo usado por outra pessoa');
 	});
 
-	it('deve obter o nome de um jogador pelo seu token', function() {
+	it('deve obter um jogador pelo seu token', function() {
 		lobby.adicionarJogador(jogador);
 		lobby.adicionarJogador(outroJogador);
 
-		lobby.obterNome(jogador.token).should.equal(jogador.nome);
-		lobby.obterNome(outroJogador.token).should.equal(outroJogador.nome);
+		lobby.obter(jogador.token).should.equal(jogador);
+		lobby.obter(outroJogador.token).should.equal(outroJogador);
 	});
 
 	it('deve remover um jogador pelo seu token', function() {

@@ -8,10 +8,10 @@ function Lobby() {
 		jogadores.push(novoJogador);
 	};
 
-	self.obterNome = function(token) {
+	self.obter = function(token) {
 		return jogadores.filter(function(jogador) {
 			return jogador.token === token;
-		})[0].nome;
+		})[0];
 	};
 
 	self.obterJogadores = function() {
