@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Lobby = require('./model/lobby');
+var jogadorFactory = require('.model/jogadorFactory');
 var juiz = require('./model/juiz');
 
 app.use(function(req, res, next) {
@@ -16,16 +17,15 @@ var jogadores = [];
 var lobby = new Lobby();
 
 io.on('connection', function(socket) {
-	socket.on('entrar', function(mensagem) {
-		var jogador = {
-			id: socket.id,
-			nome: mensagem
-		};
+	socket.on('entrar', function(apelido) {
+		var jogador = jogadorFactory.criar(socket.id, apelido);
 
 		jogadores.push(jogador);
 		lobby.adicionarJogador(jogador);
 
 		socket.emit('entrada-registrada');
+
+		console.log('Jogador conectou');
 	});
 
 	socket.on('jogada', function(jogada) {
@@ -66,25 +66,19 @@ io.on('connection', function(socket) {
 		}
 	});
 
-	console.log('a user connected');
-
 	socket.on('disconnect', function() {
-		for (var index = 0; index < jogadores.length; index++) {
-			if (jogadores[index].id === socket.id) {
-				console.log('Id encontrado: ', socket.id);
-				jogadores.slice(index);
-			}
-		}
+		var token = socket.id;
+		lobby.removerJogador(token);
 
-		console.log('user disconnected');
+		console.log('Jogador desconectou');
 	});
 });
 
 app.get('/api/jogadoresOnline', function(req, res) {
-	console.log('Jogadores obtidos');
 	res.json(lobby.obterJogadores());
+	console.log('Jogadores obtidos');
 });
 
 http.listen(3000, function() {
-	console.log('listening on *:3000');
+	console.log('Juiz rodando!');
 });

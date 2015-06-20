@@ -2,21 +2,26 @@ var should = require('chai').should();
 var Lobby = require('../../model/lobby');
 
 describe('Lobby de jogadores', function() {
-	var lobby, jogador;
+	var lobby, jogador, outroJogador;
 
 	beforeEach(function() {
 		lobby = new Lobby();
+		
 		jogador = {
-			token: 1000,
+			token: 'asdoj123asfd',
 			nome: 'Renan'
+		};
+
+		outroJogador = {
+			token: 'sad[pwg]w[1',
+			nome: 'Siravegna'
 		};
 	});
 
 	it('deve adicionar um novo jogador', function() {
 		lobby.adicionarJogador(jogador);
 
-		lobby.obterJogadores().should.have.length(1);
-		lobby.obterJogadores()[0].should.equal(jogador);
+		lobby.obterJogadores().should.deep.equal([jogador]);
 	});
 
 	it('não deve adicionar jogadores de nomes iguais', function() {
@@ -24,14 +29,10 @@ describe('Lobby de jogadores', function() {
 
 		(function() {
 			lobby.adicionarJogador(jogador);
-		}).should.throw(Error, 'Este nome já existe');
+		}).should.throw(Error, 'Este nome já está sendo usado por outra pessoa');
 	});
 
 	it('deve obter o nome de um jogador pelo seu token', function() {
-		var outroJogador = {
-			token: 1234,
-			nome: 'Siravegna'
-		};
 		lobby.adicionarJogador(jogador);
 		lobby.adicionarJogador(outroJogador);
 
@@ -40,16 +41,21 @@ describe('Lobby de jogadores', function() {
 	});
 
 	it('deve remover um jogador pelo seu token', function() {
-		var outroJogador = {
-			token: 1234,
-			nome: 'Siravegna'
-		};
 		lobby.adicionarJogador(jogador);
 		lobby.adicionarJogador(outroJogador);
 
-		lobby.removerJogador(outroJogador);
+		lobby.removerJogador(outroJogador.token);
 
-		lobby.obterJogadores().should.have.length(1);
-		lobby.obterJogadores()[0].nome.should.not.equal(jogador.nome);
+		lobby.obterJogadores().should.deep.equal([jogador]);
+	});
+
+	it('não deve remover ninguem caso não encontre o jogador pelo token', function() {
+		lobby.adicionarJogador(jogador);
+		lobby.adicionarJogador(outroJogador);
+		var tokenInexistente = '][213rweof';
+
+		lobby.removerJogador(tokenInexistente);
+
+		lobby.obterJogadores().should.deep.equal([jogador, outroJogador]);
 	});
 });

@@ -18,21 +18,17 @@ function Lobby() {
 		return jogadores;
 	};
 
-	self.removerJogador = function(jogadorParaRemover) {
-		var posicaoDoJogador = -1;
-
+	self.removerJogador = function(token) {
 		jogadores.map(function(jogador, index) {
-			if (jogador.token === jogadorParaRemover.token)
-				posicaoDoJogador = index;
+			if (jogador.token === token)
+				jogadores = jogadores.splice(index - 1, 1);
 		});
-
-		jogadores = jogadores.slice(posicaoDoJogador);
 	};
 
 	function validarJogadorComNomeRepetido(novoJogador) {
 		jogadores.map(function(jogador) {
 			if (jogador.nome === novoJogador.nome)
-				throw new Error('Este nome já existe');
+				throw new Error('Este nome já está sendo usado por outra pessoa');
 		});
 	}
 }
