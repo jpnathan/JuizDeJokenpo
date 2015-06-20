@@ -28,10 +28,31 @@ io.on('connection', function(socket) {
 		console.log('Jogador conectou');
 	});
 
+	// TODO: Validar se o jogador escolhido já não está em um desafio
+	socket.on('desafiar-jogador', function(tokenDoAdversario) {
+		var meuToken = socket.id;
+
+		io.to(tokenDoAdversario).emit('desafio', meuToken);
+	});
+
+	// TODO: Validar se o jogador escolhido já não está em um desafio
+	socket.on('aceitar-desafio', function(tokenDoAdversario) {
+		var meuToken = socket.id;
+
+		var partida = partidaFactory.criar(meuToken, tokenDoAdversario);
+		partidas.adicionar(partida);
+
+		io.to(meuToken).emit('iniciar-partida', partida);
+		io.to(tokenDoAdversario).emit('iniciar-partida', partida);
+	});
+
 	socket.on('jogada', function(jogada) {
 		var meuToken = socket.id;
 		var minhaJogada = jogada.jogada;
 		var tokenDoAdversario = jogada.tokenDoAdversario;
+
+		var partida = partidas.obterPartida(meuToken, tokenDoAdversario);
+		partida.jogar(meuToken, minhaJogada);
 
 		if (jogadasEmEspera[tokenDoAdversario] === undefined)
 			jogadasEmEspera[meuToken] = minhaJogada;
