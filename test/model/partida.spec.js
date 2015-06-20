@@ -38,4 +38,27 @@ describe('Partida', function() {
 		partida.obterJogada(jogador).should.equal(jogada);
 		partida.obterJogada(outroJogador).should.equal(outraJogada);
 	});
+
+	it('deve indicar se está esperando uma jogada', function() {
+		var partida = new Partida(jogador, outroJogador);
+
+		partida.jogar(jogador, 'pedra');
+
+		partida.estado().should.equal('Esperando jogada');
+	});
+
+	it('deve indicar o vencedor caso já tenha as duas jogadas', function() {
+		var jogada = 'tesoura';
+		var outraJogada = 'pedra';
+		var partida = new Partida(jogador, outroJogador);
+		var feedbackDoCallback = '';
+		var callback = function(resultado) {
+			feedbackDoCallback = resultado;
+		};
+
+		partida.jogar(jogador, jogada, callback);
+		partida.jogar(outroJogador, outraJogada, callback);
+
+		feedbackDoCallback.should.equal('pedra venceu');
+	});
 });

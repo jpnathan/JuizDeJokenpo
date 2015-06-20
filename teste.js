@@ -13,15 +13,12 @@ app.use(function(req, res, next) {
 	next();
 });
 
-var jogadasEmEspera = {};
-var jogadores = [];
 var lobby = new Lobby();
 
 io.on('connection', function(socket) {
 	socket.on('entrar', function(apelido) {
 		var jogador = jogadorFactory.criar(socket.id, apelido);
 
-		jogadores.push(jogador);
 		lobby.adicionarJogador(jogador);
 
 		socket.emit('entrada-registrada');
@@ -42,45 +39,23 @@ io.on('connection', function(socket) {
 		var meuAdversario = lobby.obter(tokenDoAdversario);
 
 		var partida = new Partida(eu, meuAdversario);
-		partidas.adicionar(partida);
+		gerenciadorDePartidas.adicionar(partida);
 
 		io.to(meuToken).emit('iniciar-partida', partida);
 		io.to(tokenDoAdversario).emit('iniciar-partida', partida);
 	});
 
 	socket.on('jogada', function(jogada) {
-		var meuToken = socket.id;
+		var eu = lobby.obter(socket.id);
 		var minhaJogada = jogada.jogada;
-		var tokenDoAdversario = jogada.tokenDoAdversario;
+		var meuAdversario = lobby.obter(tokenDoAdversario);
 
-		var partida = partidas.obterPartida(meuToken, tokenDoAdversario);
-		partida.jogar(meuToken, minhaJogada);
+		var partida = gerenciadorDePartidas.obterPor(eu, meuAdversario);
 
-		if (jogadasEmEspera[tokenDoAdversario] === undefined)
-			jogadasEmEspera[meuToken] = minhaJogada;
-		else {
-			if (meuToken === tokenDoAdversario) return;
-
-			var meuNome = lobby.obterNome(meuToken);
-			var nomeDoAdversario = lobby.obterNome(tokenDoAdversario);
-
-			var jogadaDoAdversario = jogadasEmEspera[tokenDoAdversario];
-			delete jogadasEmEspera[tokenDoAdversario];
-
-			var jogadaVencedora = juiz.analisar(minhaJogada, jogadaDoAdversario);
-			var resposta = 'Jogador ' + (jogadaVencedora === minhaJogada ? meuNome : nomeDoAdversario) + ' venceu jogando ' + jogadaVencedora;
-
-			var resposta = {
-				jogadaVencedora: resposta
-			};
-
-			console.log(meuToken);
-			console.log(tokenDoAdversario);
-			console.log(resposta);
-
-			io.to(meuToken).emit('jogadaVencedora', resposta);
-			io.to(tokenDoAdversario).emit('jogadaVencedora', resposta);
-		}
+		partida.jogar(eu, minhaJogada, function(resultado) {
+			io.to(eu.token).emit('resultado', resultado);
+			io.to(meuAdversario.token).emit('resultado', resultado);
+		});
 	});
 
 	socket.on('disconnect', function() {
