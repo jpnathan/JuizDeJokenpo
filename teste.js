@@ -2,7 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var Lobby = require('./model/lobby');
-var jogadorFactory = require('.model/jogadorFactory');
+var jogadorFactory = require('./model/jogadorFactory');
 var juiz = require('./model/juiz');
 
 app.use(function(req, res, next) {
@@ -38,14 +38,8 @@ io.on('connection', function(socket) {
 		else {
 			if (meuToken === tokenDoAdversario) return;
 
-			var meuNome, nomeDoAdversario;
-
-			for (var index = 0; index < jogadores.length; index++) {
-				if (jogadores[index].id === meuToken)
-					meuNome = jogadores[index].nome;
-				else if (jogadores[index].id === tokenDoAdversario)
-					nomeDoAdversario = jogadores[index].nome;
-			}
+			var meuNome = lobby.obterNome(meuToken);
+			var nomeDoAdversario = lobby.obterNome(tokenDoAdversario);
 
 			var jogadaDoAdversario = jogadasEmEspera[tokenDoAdversario];
 			delete jogadasEmEspera[tokenDoAdversario];
@@ -79,6 +73,6 @@ app.get('/api/jogadoresOnline', function(req, res) {
 	console.log('Jogadores obtidos');
 });
 
-http.listen(3000, function() {
+http.listen(3300, function() {
 	console.log('Juiz rodando!');
 });
