@@ -9,21 +9,24 @@ function Lobby() {
 	};
 
 	self.obterNome = function(token) {
-		for (var index = 0; index < jogadores.length; index++) {
-			var jogador = jogadores[index];
-
-			if (jogador.token === token)
-				return jogador.nome;
-		}
-
-		return null;
+		return jogadores.filter(function(jogador) {
+			return jogador.token === token;
+		})[0].nome;
 	};
 
 	self.obterJogadores = function() {
 		return jogadores;
 	};
 
-	self.removerJogador = function(jogador) {
+	self.removerJogador = function(jogadorParaRemover) {
+		var posicaoDoJogador = -1;
+
+		jogadores.map(function(jogador, index) {
+			if (jogador.token === jogadorParaRemover.token)
+				posicaoDoJogador = index;
+		});
+
+		jogadores = jogadores.slice(posicaoDoJogador);
 	};
 
 	function validarJogadorComNomeRepetido(novoJogador) {

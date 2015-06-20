@@ -39,7 +39,7 @@ describe('Lobby de jogadores', function() {
 		lobby.obterNome(outroJogador.token).should.equal(outroJogador.nome);
 	});
 
-	xit('deve remover um jogador pelo seu token', function() {
+	it('deve remover um jogador pelo seu token', function() {
 		var outroJogador = {
 			token: 1234,
 			nome: 'Siravegna'
@@ -50,6 +50,6 @@ describe('Lobby de jogadores', function() {
 		lobby.removerJogador(outroJogador);
 
 		lobby.obterJogadores().should.have.length(1);
-		lobby.obterJogadores[0].nome.should.not.equal(jogador.nome);
+		lobby.obterJogadores()[0].nome.should.not.equal(jogador.nome);
 	});
 });
