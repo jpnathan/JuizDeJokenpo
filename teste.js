@@ -71,6 +71,6 @@ app.get('/api/jogadoresOnline', function(req, res) {
 	console.log('Jogadores obtidos');
 });
 
-http.listen(3300, function() {
+http.listen(3330, function() {
 	console.log('Juiz rodando!');
 });

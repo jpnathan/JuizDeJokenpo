@@ -6,10 +6,10 @@ gulp.task('test', function() {
 			read: false
 		})
 		.pipe(mocha({
-			reporter: 'nyan'
+			reporter: 'progress'
 		}));
 });
 
 gulp.task('watch', function() {
-	gulp.watch(['**/model/**/*.js', '**/*.spec.js'], ['test']);
+	gulp.watch(['**/model/**/*.js', '**/test/**/*.js'], ['test']);
 });

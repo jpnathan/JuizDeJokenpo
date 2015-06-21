@@ -1,6 +1,7 @@
 var should = require('chai').should();
 var jogadorFactory = require('../../model/jogadorFactory');
 var Partida = require('../../model/partida');
+var callbackSpy = require('../helpers/callbackSpy');
 
 describe('Partida', function() {
 	var jogador = jogadorFactory.criar(1, 'Renan');
@@ -51,14 +52,11 @@ describe('Partida', function() {
 		var jogada = 'tesoura';
 		var outraJogada = 'pedra';
 		var partida = new Partida(jogador, outroJogador);
-		var feedbackDoCallback = '';
-		var callback = function(resultado) {
-			feedbackDoCallback = resultado;
-		};
 
-		partida.jogar(jogador, jogada, callback);
-		partida.jogar(outroJogador, outraJogada, callback);
+		partida.jogar(jogador, jogada, callbackSpy);
+		partida.jogar(outroJogador, outraJogada, callbackSpy);
 
-		feedbackDoCallback.should.equal('pedra venceu');
+		callbackSpy.quantidadeDeChamadas().should.equal(1);
+		callbackSpy.parametro(0).should.equal('pedra venceu');
 	});
 });
