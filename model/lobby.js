@@ -21,7 +21,7 @@ function Lobby() {
 	self.removerJogador = function(token) {
 		jogadores.map(function(jogador, index) {
 			if (jogador.token === token)
-				jogadores = jogadores.splice(index - 1, 1);
+				jogadores.splice(index);
 		});
 	};
 

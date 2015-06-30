@@ -16,6 +16,10 @@ app.use(function(req, res, next) {
 var lobby = new Lobby();
 
 io.on('connection', function(socket) {
+	socket.on('error', function(error) {
+		console.error(error);
+	});
+
 	socket.on('entrar', function(apelido) {
 		var jogador = jogadorFactory.criar(socket.id, apelido);
 
@@ -58,7 +62,16 @@ io.on('connection', function(socket) {
 		});
 	});
 
+	socket.on('sair', function() {
+		// TODO: Eliminar duplicação
+		var token = socket.id;
+		lobby.removerJogador(token);
+		
+		console.log('Jogador saiu');
+	});
+
 	socket.on('disconnect', function() {
+		// TODO: Eliminar duplicação
 		var token = socket.id;
 		lobby.removerJogador(token);
 

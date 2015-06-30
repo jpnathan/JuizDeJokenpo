@@ -49,6 +49,14 @@ describe('Lobby de jogadores', function() {
 		lobby.obterJogadores().should.deep.equal([jogador]);
 	});
 
+	it('deve remover o jogador corretamente o último jogador', function() {
+		lobby.adicionarJogador(jogador);
+
+		lobby.removerJogador(jogador.token);
+
+		lobby.obterJogadores().should.deep.equal([]);
+	});
+
 	it('não deve remover ninguem caso não encontre o jogador pelo token', function() {
 		lobby.adicionarJogador(jogador);
 		lobby.adicionarJogador(outroJogador);
