@@ -1,47 +1,89 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var juiz = require("./model/juiz");
-
-app.use(bodyParser.urlencoded({
-	extended: true
-}));
-app.use(bodyParser.json());
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var Lobby = require('./model/lobby');
+var Partida = require('./model/partida');
+var jogadorFactory = require('./model/jogadorFactory');
+var juiz = require('./model/juiz');
 
 app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 	next();
 });
 
-var porta = process.env.PORT || 1110;
+var lobby = new Lobby();
 
-var router = express.Router();
-var jogadaEmEspera;
-var resEmEspera;
+io.on('connection', function(socket) {
+	socket.on('error', function(error) {
+		console.error(error);
+	});
 
-router.post("/analisarJogada", function(req, res) {
-	if (!jogadaEmEspera){
-		console.log("Jogada esperando");
-		resEmEspera = res;
-		jogadaEmEspera = req.body.jogada;
-	}
-	else {
-		var resposta = {
-			jogadaVencedora: juiz.analisar(jogadaEmEspera, req.body.jogada)
-		};
+	socket.on('entrar', function(apelido) {
+		var jogador = jogadorFactory.criar(socket.id, apelido);
 
-		res.json(resposta);
-		resEmEspera.json(resposta);
+		lobby.adicionarJogador(jogador);
+
+		socket.emit('entrada-registrada');
+
+		console.log('Jogador conectou');
+	});
+
+	// TODO: Validar se o jogador escolhido já não está em um desafio
+	socket.on('desafiar-jogador', function(tokenDoAdversario) {
+		var meuToken = socket.id;
+
+		io.to(tokenDoAdversario).emit('desafio', meuToken);
+	});
+
+	// TODO: Validar se o jogador escolhido já não está em um desafio
+	socket.on('aceitar-desafio', function(tokenDoAdversario) {
+		var eu = lobby.obter(socket.id);
+		var meuAdversario = lobby.obter(tokenDoAdversario);
+
+		var partida = new Partida(eu, meuAdversario);
+		gerenciadorDePartidas.adicionar(partida);
+
+		io.to(meuToken).emit('iniciar-partida', partida);
+		io.to(tokenDoAdversario).emit('iniciar-partida', partida);
+	});
+
+	socket.on('jogada', function(jogada) {
+		var eu = lobby.obter(socket.id);
+		var minhaJogada = jogada.jogada;
+		var meuAdversario = lobby.obter(tokenDoAdversario);
+
+		var partida = gerenciadorDePartidas.obterPor(eu, meuAdversario);
+
+		partida.jogar(eu, minhaJogada, function(resultado) {
+			io.to(eu.token).emit('resultado', resultado);
+			io.to(meuAdversario.token).emit('resultado', resultado);
+		});
+	});
+
+	socket.on('sair', function() {
+		// TODO: Eliminar duplicação
+		var token = socket.id;
+		lobby.removerJogador(token);
 		
-		jogadaEmEspera = undefined;
-		resEmEspera = undefined;
-	}
+		console.log('Jogador saiu');
+	});
+
+	socket.on('disconnect', function() {
+		// TODO: Eliminar duplicação
+		var token = socket.id;
+		lobby.removerJogador(token);
+
+		console.log('Jogador desconectou');
+	});
 });
 
-app.use("/api", router);
+app.get('/api/jogadoresOnline', function(req, res) {
+	res.json(lobby.obterJogadores());
+	console.log('Jogadores obtidos');
+});
 
-app.listen(porta);
-
-console.log("Juiz de jokenpo iniciado na porta " + porta);
+http.listen(3330, function() {
+	console.log('Juiz rodando!');
+});

@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "API para analisar jogadas de Jokenpo",
   "scripts": {
-    "start": "node teste.js",
+    "start": "node serverSocket.js",
     "test": "gulp test"
   },
   "repository": {
