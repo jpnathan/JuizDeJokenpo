@@ -34,6 +34,8 @@ io.on('connection', function(socket) {
 	socket.on('desafiar-jogador', function(tokenDoAdversario) {
 		var meuToken = socket.id;
 
+		console.log('jogador desafiado');
+
 		io.to(tokenDoAdversario).emit('desafio', meuToken);
 	});
 
